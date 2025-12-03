@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
-
-  <!-- jsPsych -->
-  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
-  <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.js"></script>
-
-  <!-- Plugins -->
-  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+  <link href="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/css/jspsych.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/jspsych@6.3.1/jspsych.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-html-button-response@1.1.2/dist/index.browser.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-preload@1.1.2/dist/index.browser.js"></script>
 
   <style>
-    body { background: #fafafa; }
+    body { background: #ffffff; }
     .stim-container {
       display: flex;
       justify-content: center;
@@ -21,7 +17,7 @@
       margin-top: 30px;
     }
     img {
-      max-width: 40vw;
+      width: 40%;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
@@ -30,6 +26,8 @@
 <body></body>
 
 <script>
+
+// Pair definition
 const pairs = [
   {
     id: "001",
@@ -38,48 +36,42 @@ const pairs = [
   }
 ];
 
-const all_images = [];
-pairs.forEach(p => { all_images.push(p.human, p.ai); });
-
-const jsPsych = initJsPsych({
-  on_finish: () => {
-    document.body.innerHTML = "<h2 style='text-align:center;'>Thank you for your participation!<br>Your responses have been recorded.</h2>";
-  }
-});
-
 const timeline = [];
 
+// Preload
 timeline.push({
   type: jsPsychPreload,
-  images: all_images
+  images: [pairs[0].human, pairs[0].ai]
 });
 
+// Consent
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
-    <p>This study explores how people perceive creativity in artworks.</p>
+    <p>This study explores how people perceive creativity.</p>
     <p>Your participation is voluntary and anonymous.</p>
     <p>Click "I agree" to continue.</p>
   `,
   choices: ["I agree", "I do not agree"],
-  on_finish: data => {
-    if (data.response === 1) {
+  on_finish: function(data){
+    if (data.response === 1){
       jsPsych.endExperiment("You chose not to participate.");
     }
   }
 });
 
+// Welcome
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Welcome!</h2>
-    <p>You will see pairs of artworks.</p>
     <p>Select the artwork you consider more creative.</p>
   `,
   choices: ["Start"]
 });
 
+// Trial
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
@@ -92,7 +84,22 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
-jsPsych.run(timeline);
+// End screen
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <h2>Thank you for your participation!<br>
+    Your responses have been recorded.</h2>
+  `,
+  choices: ["Download results"],
+  on_finish: function(){
+    jsPsych.data.get().localSave('csv','ai_creativity_results.csv');
+  }
+});
+
+jsPsych.init({
+  timeline: timeline
+});
+
 </script>
 </html>
- 
