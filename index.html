@@ -1,1 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI vs Human Creativity</title>
+
+  <!-- jsPsych -->
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
+  <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.js"></script>
+
+  <!-- Plugins -->
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+
+  <style>
+    body { background: #fafafa; }
+    .stim-container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+    }
+    img {
+      max-width: 40vw;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+  </style>
+</head>
+<body></body>
+
+<script>
+const pairs = [
+  {
+    id: "001",
+    human: "https://raw.githubusercontent.com/anbernal18/art-ai-arm/main/Portraiture_Images/Portraiture_001_MonaLisa.jpg",
+    ai:    "https://raw.githubusercontent.com/anbernal18/art-ai-arm/main/Portraiture_AI_Images/Portraiture_AI001_MonaLisa.jpg"
+  }
+];
+
+const all_images = [];
+pairs.forEach(p => { all_images.push(p.human, p.ai); });
+
+const jsPsych = initJsPsych({
+  on_finish: () => {
+    document.body.innerHTML = "<h2 style='text-align:center;'>Thank you for your participation!<br>Your responses have been recorded.</h2>";
+  }
+});
+
+const timeline = [];
+
+timeline.push({
+  type: jsPsychPreload,
+  images: all_images
+});
+
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <h2>Consent</h2>
+    <p>This study explores how people perceive creativity in artworks.</p>
+    <p>Your participation is voluntary and anonymous.</p>
+    <p>Click "I agree" to continue.</p>
+  `,
+  choices: ["I agree", "I do not agree"],
+  on_finish: data => {
+    if (data.response === 1) {
+      jsPsych.endExperiment("You chose not to participate.");
+    }
+  }
+});
+
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <h2>Welcome!</h2>
+    <p>You will see pairs of artworks.</p>
+    <p>Select the artwork you consider more creative.</p>
+  `,
+  choices: ["Start"]
+});
+
+timeline.push({
+  type: jsPsychHtmlButtonResponse,
+  stimulus: `
+    <h3>Which artwork do you consider more creative?</h3>
+    <div class="stim-container">
+      <img src="${pairs[0].human}">
+      <img src="${pairs[0].ai}">
+    </div>
+  `,
+  choices: ["Left", "Right"]
+});
+
+jsPsych.run(timeline);
+</script>
+</html>
 
