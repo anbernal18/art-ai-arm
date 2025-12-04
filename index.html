@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
 
+  <!-- Estilos de jsPsych -->
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
 
-  <!-- jsPsych core -->
+  <!-- jsPsych + Plugins (Desde tu repo local) -->
   <script src="jspsych.js"></script>
-
-  <!-- Plugins -->
-  <script src="plugin-html-button-response.js"></script>
   <script src="plugin-preload.js"></script>
+  <script src="plugin-html-button-response.js"></script>
 
   <style>
     .stim-container {
@@ -25,12 +24,13 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
-    body { text-align: center; }
+    body { text-align: center; font-family: Arial; }
   </style>
 </head>
 <body></body>
 
 <script>
+// Lista de pares (por ahora solo 1 para prueba)
 const pairs = [
   {
     id: "001",
@@ -42,27 +42,30 @@ const pairs = [
 const jsPsych = initJsPsych({
   on_finish: function() {
     jsPsych.data.get().localSave('csv', 'results.csv');
-    document.body.innerHTML = "<h2>Thank you!</h2><p>Your responses have been recorded.</p>";
+    document.body.innerHTML = "<h2>Thank you for your participation!<br>Your responses have been recorded.</h2>";
   }
 });
 
 const timeline = [];
 
+// Precargar imágenes
 timeline.push({
   type: jsPsychPreload,
   images: [pairs[0].human, pairs[0].ai]
 });
 
+// Consent
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
-    <p>This study explores how people perceive creativity in artworks.</p>
+    <p>This study explores creativity in artworks.</p>
     <p>Click "I agree" to continue.</p>
   `,
   choices: ["I agree"]
 });
 
+// Pregunta con imágenes
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
@@ -75,6 +78,8 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
+// Correr la experimentación
 jsPsych.run(timeline);
 </script>
+
 </html>
