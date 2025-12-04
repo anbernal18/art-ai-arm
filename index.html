@@ -4,13 +4,11 @@
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
 
-  <!-- Estilos de jsPsych -->
+  <!-- jsPsych desde CDN -->
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
-
-  <!-- jsPsych + Plugins (Desde tu repo local) -->
-  <script src="jspsych.js"></script>
-  <script src="plugin-preload.js"></script>
-  <script src="plugin-html-button-response.js"></script>
+  <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
 
   <style>
     .stim-container {
@@ -30,7 +28,7 @@
 <body></body>
 
 <script>
-// Lista de pares (por ahora solo 1 para prueba)
+// ---- SOLO 1 PAR POR AHORA ----
 const pairs = [
   {
     id: "001",
@@ -42,34 +40,34 @@ const pairs = [
 const jsPsych = initJsPsych({
   on_finish: function() {
     jsPsych.data.get().localSave('csv', 'results.csv');
-    document.body.innerHTML = "<h2>Thank you for your participation!<br>Your responses have been recorded.</h2>";
+    document.body.innerHTML = "<h2>Thank you! Responses recorded.</h2>";
   }
 });
 
 const timeline = [];
 
-// Precargar imágenes
+// PRELOAD IMAGES
 timeline.push({
   type: jsPsychPreload,
   images: [pairs[0].human, pairs[0].ai]
 });
 
-// Consent
+// CONSENT
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
     <p>This study explores creativity in artworks.</p>
-    <p>Click "I agree" to continue.</p>
+    <p>Click to continue.</p>
   `,
   choices: ["I agree"]
 });
 
-// Pregunta con imágenes
+// MAIN TRIAL
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Which artwork do you consider more creative?</h3>
+    <h3>Which one is more creative?</h3>
     <div class='stim-container'>
       <img src="${pairs[0].human}">
       <img src="${pairs[0].ai}">
@@ -78,7 +76,6 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
-// Correr la experimentación
 jsPsych.run(timeline);
 </script>
 
