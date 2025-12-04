@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
 
-  <!-- jsPsych (UMD version, compatible with GitHub Pages) -->
+  <!-- jsPsych UMD stable version -->
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
   <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.umd.js"></script>
   <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2/dist/plugin-preload.umd.js"></script>
@@ -22,17 +22,16 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
-    body { text-align: center; font-family: Arial; background: #fafafa; }
+    body { text-align: center; font-family: Arial; background: #fafafa;}
   </style>
 </head>
+
 <body>
-
   <h1 style="color:red;">TEST: If you see this, HTML works!</h1>
-
 </body>
 
 <script>
-// Pairs of images (only 1 for test)
+// SINGLE TEST PAIR
 const pairs = [
   {
     id: "001",
@@ -41,39 +40,39 @@ const pairs = [
   }
 ];
 
-// Init jsPsych
-const jsPsych = initJsPsych({
-  on_finish: function() {
+// Initialize jsPsych correctly for UMD version
+const jsPsych = jsPsychModule.initJsPsych({
+  on_finish: function () {
     jsPsych.data.get().localSave('csv', 'results.csv');
     document.body.innerHTML = "<h2>Thank you! Responses recorded.</h2>";
   }
 });
 
-// Timeline
 const timeline = [];
 
+// Preload
 timeline.push({
   type: jsPsychPreload,
   images: [pairs[0].human, pairs[0].ai]
 });
 
-// Consent screen
+// Consent
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
     <p>This study explores creativity in artworks.</p>
-    <p>Click continue to participate.</p>
+    <p>Click continue.</p>
   `,
   choices: ["I agree"]
 });
 
-// Trial
+// Main trial
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Which artwork is more creative?</h3>
-    <div class='stim-container'>
+    <h3>Which one is more creative?</h3>
+    <div class="stim-container">
       <img src="${pairs[0].human}">
       <img src="${pairs[0].ai}">
     </div>
@@ -81,8 +80,6 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
-// Run experiment
 jsPsych.run(timeline);
 </script>
-
 </html>
