@@ -4,90 +4,70 @@
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
 
-  <!-- Load jsPsych v7 core -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jspsych@7.3.3/css/jspsych.css">
-  <script src="https://cdn.jsdelivr.net/npm/jspsych@7.3.3/dist/jspsych.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
 
-  <!-- Load jsPsych plugins -->
-  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-html-button-response@1.1.2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@jspsych/plugin-preload@1.1.2"></script>
+  <!-- jsPsych core -->
+  <script src="jspsych.js"></script>
+
+  <!-- Plugins -->
+  <script src="plugin-html-button-response.js"></script>
+  <script src="plugin-preload.js"></script>
 
   <style>
-    body { background: #f5f5f5; font-family: Arial; }
     .stim-container {
       display: flex;
       justify-content: center;
-      align-items: center;
       gap: 40px;
       margin-top: 30px;
     }
     img {
-      width: 40%;
+      max-width: 40%;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-      object-fit: contain;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
+    body { text-align: center; }
   </style>
 </head>
 <body></body>
 
 <script>
-// --- PAIRS (1 pair for demo) ---
 const pairs = [
   {
     id: "001",
-    human: "https://raw.githubusercontent.com/anbernal18/art-ai-arm/main/Portraiture_Images/Portraiture_001_MonaLisa.jpg",
-    ai:    "https://raw.githubusercontent.com/anbernal18/art-ai-arm/main/Portraiture_AI_Images/Portraiture_AI001_MonaLisa.jpg"
+    human: "Portraiture_Images/Portraiture_001_MonaLisa.jpg",
+    ai: "Portraiture_AI_Images/Portraiture_AI001_MonaLisa.jpg"
   }
 ];
 
-// Initialize jsPsych
 const jsPsych = initJsPsych({
   on_finish: function() {
-    document.body.innerHTML = "<h2 style='text-align:center;'>Thank you for your participation!</h2>";
+    jsPsych.data.get().localSave('csv', 'results.csv');
+    document.body.innerHTML = "<h2>Thank you!</h2><p>Your responses have been recorded.</p>";
   }
 });
 
 const timeline = [];
 
-// Preload
 timeline.push({
   type: jsPsychPreload,
   images: [pairs[0].human, pairs[0].ai]
 });
 
-// Consent
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
-    <p>This study explores how people perceive creativity.</p>
-    <p>Your participation is voluntary and anonymous.</p>
+    <p>This study explores how people perceive creativity in artworks.</p>
     <p>Click "I agree" to continue.</p>
   `,
-  choices: ["I agree", "I do not agree"],
-  on_finish: function(data) {
-    if (data.response === 1) jsPsych.endExperiment("You chose not to participate.");
-  }
+  choices: ["I agree"]
 });
 
-// Welcome
-timeline.push({
-  type: jsPsychHtmlButtonResponse,
-  stimulus: `
-    <h2>Welcome!</h2>
-    <p>You will see pairs of artworks.</p>
-    <p>Select the artwork you consider more creative.</p>
-  `,
-  choices: ["Start"]
-});
-
-// Trial
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h3>Which artwork do you consider more creative?</h3>
-    <div class="stim-container">
+    <div class='stim-container'>
       <img src="${pairs[0].human}">
       <img src="${pairs[0].ai}">
     </div>
@@ -95,8 +75,6 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
-// Run
 jsPsych.run(timeline);
 </script>
-
 </html>
