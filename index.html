@@ -1,17 +1,14 @@
-<h1 style="color:red;">TEST: SI VES ESTE TEXTO ROJO → HTML FUNCIONA</h1>
-
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>AI vs Human Creativity</title>
 
-  <!-- jsPsych desde CDN -->
+  <!-- jsPsych (UMD version, compatible with GitHub Pages) -->
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.3/dist/jspsych.css">
-  <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.js"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2"></script>
-  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+  <script src="https://unpkg.com/jspsych@7.3.3/dist/jspsych.umd.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.2/dist/plugin-preload.umd.js"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2/dist/plugin-html-button-response.umd.js"></script>
 
   <style>
     .stim-container {
@@ -25,13 +22,17 @@
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
-    body { text-align: center; font-family: Arial; }
+    body { text-align: center; font-family: Arial; background: #fafafa; }
   </style>
 </head>
-<body></body>
+<body>
+
+  <h1 style="color:red;">TEST: If you see this, HTML works!</h1>
+
+</body>
 
 <script>
-// ---- SOLO 1 PAR POR AHORA ----
+// Pairs of images (only 1 for test)
 const pairs = [
   {
     id: "001",
@@ -40,6 +41,7 @@ const pairs = [
   }
 ];
 
+// Init jsPsych
 const jsPsych = initJsPsych({
   on_finish: function() {
     jsPsych.data.get().localSave('csv', 'results.csv');
@@ -47,30 +49,30 @@ const jsPsych = initJsPsych({
   }
 });
 
+// Timeline
 const timeline = [];
 
-// PRELOAD IMAGES
 timeline.push({
   type: jsPsychPreload,
   images: [pairs[0].human, pairs[0].ai]
 });
 
-// CONSENT
+// Consent screen
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
     <h2>Consent</h2>
     <p>This study explores creativity in artworks.</p>
-    <p>Click to continue.</p>
+    <p>Click continue to participate.</p>
   `,
   choices: ["I agree"]
 });
 
-// MAIN TRIAL
+// Trial
 timeline.push({
   type: jsPsychHtmlButtonResponse,
   stimulus: `
-    <h3>Which one is more creative?</h3>
+    <h3>Which artwork is more creative?</h3>
     <div class='stim-container'>
       <img src="${pairs[0].human}">
       <img src="${pairs[0].ai}">
@@ -79,6 +81,7 @@ timeline.push({
   choices: ["Left", "Right"]
 });
 
+// Run experiment
 jsPsych.run(timeline);
 </script>
 
